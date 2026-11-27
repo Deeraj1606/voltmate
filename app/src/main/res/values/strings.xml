@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">VoltMate</string>
+    <string name="default_web_client_id" translatable="false">626517736085-9lccq15sgbaq5aptvfkj7qb3tiln1oaq.apps.googleusercontent.com</string>
+</resources>

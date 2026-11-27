@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.company.voltmate.app-mergeDebugResources-75:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\DRJ\\.gradle\\caches\\8.10.2\\transforms\\f323758cc7f6b9ca26242af9bff081db\\transformed\\appcompat-1.6.1\\res\\values-port\\values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}

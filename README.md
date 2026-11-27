@@ -100,3 +100,4 @@ This project is licensed under the **MIT License** â€“ see the [LICENSE](LI
 - **Feedback**: Open an issue or start a discussion on the repository.
 - **Inspired by**: Tata Motors EV ecosystem and the openâ€‘source Android community.
 
+

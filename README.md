@@ -1,34 +1,56 @@
 # VoltMate ⚡
 
-Peer-to-peer EV charger sharing for Tata EV owners in India. Owners register idle home/shop chargers and earn. Drivers find chargers on a map, book a slot, tap NFC, charge, pay in-app, and only then the connector unlocks.
+[![GitHub license](https://img.shields.io/github/license/Deeraj1606/voltmate)](https://github.com/Deeraj1606/voltmate/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Deeraj1606/voltmate)](https://github.com/Deeraj1606/voltmate/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/Deeraj1606/voltmate)](https://github.com/Deeraj1606/voltmate/issues)
+
+## Overview
+VoltMate is an **open‑source Android application** that lets EV owners **share** idle home or shop chargers with other Tata EV drivers. It demonstrates a complete end‑to‑end flow:
+
+- **Driver** discovers chargers on an interactive map, books a slot, taps NFC, charges, and pays **in‑app**.
+- **Owner** registers a charger, sets pricing & availability, earns from each session, and can withdraw simulated funds.
+- All transactions are recorded in a **wallet** that works offline via `SharedPreferences` and syncs to Cloud Firestore when online.
+
+The project showcases modern Android best‑practices: Jetpack Compose, Material 3, Kotlin coroutines, manual DI, Firestore batch transactions, and graceful offline handling.
+
+---
+
+## Key Features
+- **Real‑time charger map** (OSMDroid) with distance filtering.
+- **Dual‑role dashboards** (Driver & Owner) that load instantly using demo data when Firestore is unavailable.
+- **In‑app wallet** with top‑up, payment, earnings, and simulated withdrawal flows.
+- **Secure authentication** – Google Sign‑In via Credential Manager + Email/Password fallback.
+- **Robust UI** – No white‑on‑light text, green accent palette, consistent Material 3 theming.
+- **Offline‑first** – Demo data displayed instantly; Firestore calls wrapped in `try/catch + withTimeoutOrNull(4000)`.
+- **Clear architecture** – Single‑module app, manual DI container, MVVM with `StateFlow`.
+
+---
 
 ## Tech Stack
-
 | Layer | Technology |
 |---|---|
 | Language | Kotlin |
-| UI | Jetpack Compose + Material 3 |
+| UI | Jetpack Compose + Material 3 |
 | Build | Gradle Kotlin DSL, Version Catalog |
-| Auth | Firebase Auth (Google Sign-In via Credential Manager, Email/Password) |
-| Database | Cloud Firestore (real-time listeners) |
+| Auth | Firebase Auth (Google Sign‑In via Credential Manager, Email/Password) |
+| Database | Cloud Firestore (real‑time listeners) |
 | Location | Google Play Services Location + OSMDroid |
-| Charger HW | Simulated ChargerGateway (NFC auth, CC-CV charging curve, telemetry) |
-| Min SDK | 26 · Target/Compile SDK 35 |
+| Charger HW | Simulated `ChargerGateway` (NFC auth, CC‑CV curve, telemetry) |
+| Min SDK | 26 • Target/Compile SDK 35 |
 
-## Architecture
+---
 
-Single-module `app`, manual DI via `AppContainer`, MVVM with `StateFlow`.
-
+## Architecture Snapshot
 ```
 com.company.voltmate
 ├── data
-│   ├── gateway/       # ChargerGateway (simulated HW)
+│   ├── gateway/       # Simulated charger hardware
 │   ├── model/         # Kotlin data classes
-│   └── repository/    # Auth, Charger, Booking, Session repos
-├── di/                # AppContainer (manual DI)
+│   └── repository/    # Auth, Charger, Booking, Session, Wallet
+├── di/                # Manual DI container (AppContainer)
 ├── ui
 │   ├── auth/          # Splash, Login (Google + Email)
-│   ├── onboarding/    # Role pick, Driver & Owner onboarding
+│   ├── onboarding/    # Role pick, driver & owner onboarding
 │   ├── driver/        # Dashboard, ChargerDetail, Booking, ChargingSession
 │   ├── owner/         # Dashboard, Chargers, Earnings, Profile
 │   └── theme/         # Colors, Typography, Logo, Theme
@@ -36,46 +58,42 @@ com.company.voltmate
 └── VoltMateApp.kt     # Application class
 ```
 
-## Screens
+---
 
-### Driver Flow
-1. **Splash** → auto-route based on auth + onboarding state
-2. **Login** → Google Sign-In or Email/Password
-3. **Role Pick** → Driver or Owner
-4. **Driver Onboarding** → Select Tata car model, battery, connector, NFC tag
-5. **Driver Dashboard** → 4 tabs: Map, Chargers, Bookings, Profile
-6. **Charger Detail** → Hero card, info grid, amenities, availability days
-7. **Booking** → Time slot picker with transactional Firestore booking
-8. **Charging Session** → 4-step flow: NFC Tap → Live Charging → Payment → Done
-   - Live telemetry: SoC ring, power, voltage, current, temp, energy, cost
-   - CC-CV charging curve simulation with realistic taper above 80%
-   - Demo speed controls (1x, 10x, 60x)
-   - Connector stays locked until payment confirmed
+## Getting Started
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/Deeraj1606/voltmate.git
+   cd voltmate
+   ```
+2. **Open in Android Studio** (Arctic Fox or newer). The project uses Gradle 8.10.2 and JDK 17 (bundled JBR works).
+3. **Add Firebase config** – place your `google-services.json` in `app/` and enable Auth + Firestore.
+4. **Build & run**
+   ```bash
+   ./gradlew :app:assembleDebug
+   ```
+   The app launches with a pre‑seeded demo wallet (`₹ 500` welcome credit).
 
-### Owner Flow
-1. **Owner Onboarding** → Register charger with type, power, pricing, schedule, amenities
-2. **Owner Dashboard** → 4 tabs: Home (stats), Chargers (toggle on/off), Earnings, Profile
-3. **Earnings** → Total revenue, session count, kWh sold, transaction history
+---
 
-## Build
+## Contributing
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/awesome-feature`).
+3. Keep the code style consistent (Kotlin Formatting, Compose lint).
+4. Write unit/instrumented tests for new logic.
+5. Open a Pull Request with a clear description of the changes.
 
-```bash
-# Requires JDK 17 (Android Studio JBR works)
-./gradlew :app:assembleDebug
-```
+See the `CONTRIBUTING.md` file for detailed guidelines (code style, commit messages, testing).
 
-## Firebase Setup
-
-Place your `google-services.json` in `app/`. The app uses:
-- Firebase Authentication
-- Cloud Firestore
-
-See `firestore.rules` for security rules.
-
-## Demo Data
-
-The app ships with 8 demo chargers around Chennai and 7 demo owner sessions for a realistic first-run experience. All demo data merges seamlessly with live Firestore data.
+---
 
 ## License
+This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
 
-This project is for educational/demo purposes. Not affiliated with Tata Motors.
+---
+
+## Contact & Credits
+- **Author**: Deeraj Patel ([@Deeraj1606](https://github.com/Deeraj1606))
+- **Feedback**: Open an issue or start a discussion on the repository.
+- **Inspired by**: Tata Motors EV ecosystem and the open‑source Android community.
